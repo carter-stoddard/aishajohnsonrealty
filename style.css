@@ -1,0 +1,233 @@
+:root {
+  --bg-color: #f8f3ef;
+  --font-color: #6b4765;
+  --btn-bg: #ece2da;
+  --btn-hover-bg: #decebf;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #6b4765;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  font-family: 'Lato', sans-serif;
+  color: var(--font-color);
+}
+
+/* Mobile Container to mimic the phone layout */
+.mobile-container {
+  width: 100%;
+  max-width: 420px; /* iPhone Pro Max width approx */
+  background-color: var(--bg-color);
+  min-height: 100vh;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Banner Section */
+.banner-section {
+  position: relative;
+  width: 100%;
+  height: 140px;
+  margin-top: 10px;
+  padding: 0 15px;
+}
+
+.banner-image {
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  border-radius: 24px;
+}
+
+.profile-container {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translate(-50%, 35%);
+  width: 150px;
+  display: flex;
+  justify-content: center;
+}
+
+.profile-img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 120px;
+
+  background-color: transparent;
+}
+
+/* Content Section */
+.content-section {
+  margin-top: 55px;
+  text-align: center;
+  flex: 1;
+  padding: 0 30px;
+}
+
+.brand-logo {
+  width: 70%;
+  max-width: 220px;
+  height: auto;
+  margin: 0 auto 15px auto;
+  position: relative;
+  left: -10px;
+  display: block;
+}
+
+/* Form */
+.form-container {
+  margin-bottom: 20px;
+}
+
+.form-heading {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2rem;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: var(--font-color);
+}
+
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.contact-form input,
+.contact-form select,
+.contact-form textarea {
+  width: 100%;
+  padding: 12px 16px;
+  font-family: 'Lato', sans-serif;
+  font-size: 0.8rem;
+  color: var(--font-color);
+  background-color: var(--btn-bg);
+  border: none;
+  border-radius: 50px;
+  outline: none;
+  letter-spacing: 0.5px;
+}
+
+.contact-form input::placeholder,
+.contact-form textarea::placeholder {
+  color: var(--font-color);
+  opacity: 0.6;
+}
+
+.contact-form textarea {
+  border-radius: 20px;
+  resize: none;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.field-hint {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.8rem;
+  font-style: italic;
+  color: var(--font-color);
+  opacity: 0;
+  max-height: 0;
+  transition: opacity 0.3s ease, max-height 0.3s ease;
+  padding-left: 16px;
+  text-align: left;
+}
+
+.field-hint.show {
+  opacity: 0.75;
+  max-height: 20px;
+}
+
+.contact-form select {
+  appearance: none;
+  cursor: pointer;
+  opacity: 0.8;
+}
+
+.btn-submit {
+  padding: 14px;
+  font-family: 'Lato', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  color: #fff;
+  background-color: var(--font-color);
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-submit:hover {
+  opacity: 0.9;
+  transform: translateY(-2px);
+}
+
+/* Social Icons */
+.social-icons {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 15px;
+}
+
+.social-icons a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  background-color: var(--btn-bg);
+  color: var(--font-color);
+  text-decoration: none;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.social-icons a:hover {
+  background-color: var(--btn-hover-bg);
+  transform: scale(1.1);
+}
+
+/* Footer */
+.footer {
+  text-align: center;
+  padding: 20px 0;
+  background-color: var(--btn-bg);
+  font-family: 'Cormorant Garamond', serif;
+  color: var(--font-color);
+  margin-top: auto;
+}
+
+.footer-main {
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 1.5px;
+  margin-bottom: 4px;
+}
+
+.footer-sub {
+  font-size: 0.75rem;
+  font-weight: 400;
+  letter-spacing: 1.5px;
+  opacity: 0.8;
+}

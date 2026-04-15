@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Aisha Johnson Realty</title>
+    <!-- Google Fonts for Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="./style.css">
+  </head>
+  <body>
+    <div class="mobile-container">
+      <header class="banner-section">
+        <div class="banner-image" style="background-image: url('./Banner-Background.png');"></div>
+        <div class="profile-container">
+          <img src="./Aisha-Johnson-Realty-PFP.png" alt="Aisha Johnson" class="profile-img" />
+        </div>
+      </header>
+
+      <main class="content-section">
+        <img src="./Aisha-Johnson-Realty-Logo.png" alt="Aisha Johnson Realty Logo" class="brand-logo" />
+
+        <div class="social-icons">
+          <a href="https://instagram.com/aishajohnsonrealty" aria-label="Instagram" target="_blank"><i class="fab fa-instagram"></i></a>
+          <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+          <a href="mailto:amjrebroker@outlook.com" aria-label="Email"><i class="far fa-envelope"></i></a>
+          <a href="tel:+13106212219" aria-label="Phone"><i class="fas fa-phone"></i></a>
+        </div>
+
+        <div class="form-container">
+          <h2 class="form-heading">Ready to Make a Move?</h2>
+          <form action="https://formsubmit.co/amjrebroker@outlook.com" method="POST" class="contact-form">
+            <input type="hidden" name="_subject" value="New Lead from Landing Page">
+            <input type="hidden" name="_captcha" value="false">
+            <div class="form-field">
+              <input type="text" name="first_name" placeholder="First Name" data-hint="Beautiful name ✨" required>
+              <span class="field-hint"></span>
+            </div>
+            <div class="form-field">
+              <input type="text" name="last_name" placeholder="Last Name" data-hint="Love it — nice to meet you" required>
+              <span class="field-hint"></span>
+            </div>
+            <div class="form-field">
+              <input type="email" name="email" placeholder="Email" data-hint="Perfect, I'll be in touch soon" required>
+              <span class="field-hint"></span>
+            </div>
+            <div class="form-field">
+              <input type="tel" name="phone" placeholder="Phone" data-hint="Great — I'll give you a call">
+              <span class="field-hint"></span>
+            </div>
+            <div class="form-field">
+              <select name="interest" required>
+                <option value="" disabled selected>I'm Interested In...</option>
+                <option value="Buying">Buying</option>
+                <option value="Selling">Selling</option>
+                <option value="Both">Both</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <textarea name="notes" placeholder="Any Notes?" data-hint="Thanks for sharing — can't wait to help" rows="3"></textarea>
+              <span class="field-hint"></span>
+            </div>
+            <button type="submit" class="btn-submit">LET'S CONNECT</button>
+          </form>
+        </div>
+        <script>
+          document.querySelectorAll('.form-field input, .form-field textarea').forEach(el => {
+            const hint = el.parentElement.querySelector('.field-hint');
+            const message = el.getAttribute('data-hint');
+            if (!hint || !message) return;
+            el.addEventListener('input', () => {
+              hint.textContent = el.value.trim() ? message : '';
+              hint.classList.toggle('show', !!el.value.trim());
+            });
+          });
+        </script>
+      </main>
+
+      <footer class="footer">
+        <p class="footer-main">BROKER ASSOCIATE · TRILLION REAL ESTATE</p>
+        <p class="footer-sub">REALTOR® | DRE # 01769136</p>
+      </footer>
+    </div>
+  </body>
+</html>
