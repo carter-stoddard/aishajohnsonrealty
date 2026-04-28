@@ -2,31 +2,6 @@ import { Resend } from 'resend';
 
 const FROM_ADDRESS = 'Aisha Johnson Realty <forms@aishajohnsonrealty.com>';
 
-const ALLOWED_HOSTS = [
-  'aishajohnsonrealty.com',
-  'www.aishajohnsonrealty.com',
-  'aishajohnsonrealty.vercel.app',
-];
-
-const DISPOSABLE_EMAIL_DOMAINS = new Set([
-  'mailinator.com', 'tempmail.com', 'guerrillamail.com', 'guerrillamail.net',
-  'guerrillamail.org', 'guerrillamail.biz', 'sharklasers.com', '10minutemail.com',
-  '10minutemail.net', 'yopmail.com', 'throwawaymail.com', 'temp-mail.org',
-  'fakeinbox.com', 'trashmail.com', 'dispostable.com', 'mintemail.com',
-  'maildrop.cc', 'getnada.com', 'mohmal.com', 'spam4.me', 'tempr.email',
-  'mailcatch.com', 'tempinbox.com', 'mytemp.email', 'temporarymail.com',
-]);
-
-const BOT_UA_PATTERNS = [
-  /bot/i, /crawler/i, /spider/i, /curl/i, /wget/i, /python/i,
-  /scrapy/i, /httpclient/i, /headlesschrome/i, /phantomjs/i,
-  /puppeteer/i, /playwright/i, /selenium/i,
-];
-
-const rateLimitStore = new Map();
-const RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000;
-const RATE_LIMIT_MAX = 3;
-
 function escapeHtml(value) {
   return String(value ?? '')
     .replace(/&/g, '&amp;')
@@ -40,41 +15,17 @@ function isValidEmail(value) {
   return typeof value === 'string' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 }
 
-function getClientIp(req) {
-  const forwarded = req.headers['x-forwarded-for'];
-  if (typeof forwarded === 'string') return forwarded.split(',')[0].trim();
-  return req.socket?.remoteAddress || 'unknown';
-}
-
-function checkRateLimit(ip) {
-  const now = Date.now();
-  const entry = rateLimitStore.get(ip) || { count: 0, resetAt: now + RATE_LIMIT_WINDOW_MS };
-  if (now > entry.resetAt) {
-    entry.count = 0;
-    entry.resetAt = now + RATE_LIMIT_WINDOW_MS;
-  }
-  entry.count += 1;
-  rateLimitStore.set(ip, entry);
-  return entry.count <= RATE_LIMIT_MAX;
-}
-
-function looksLikeSpam(value) {
-  if (!value) return false;
-  const str = String(value);
-  if (/https?:\/\//i.test(str)) return true;
-  if (/<[^>]+>/.test(str)) return true;
-  if (str.length > 30 && str === str.toUpperCase() && /[A-Z]/.test(str)) return true;
-  return false;
-}
-
 function originAllowed(req) {
   const origin = req.headers.origin || req.headers.referer || '';
-  if (!origin) return false;
+  if (!origin) return true;
   try {
     const host = new URL(origin).hostname;
-    return ALLOWED_HOSTS.some((allowed) => host === allowed || host.endsWith('.vercel.app'));
-  } catch {
+    if (host === 'localhost' || host.startsWith('127.')) return true;
+    if (host.endsWith('.vercel.app')) return true;
+    if (host === 'aishajohnsonrealty.com' || host.endsWith('.aishajohnsonrealty.com')) return true;
     return false;
+  } catch {
+    return true;
   }
 }
 
@@ -95,20 +46,6 @@ export default async function handler(req, res) {
     return res.status(403).json({ error: 'Forbidden' });
   }
 
-  const ua = req.headers['user-agent'] || '';
-  if (!ua || BOT_UA_PATTERNS.some((re) => re.test(ua))) {
-    return res.status(200).json({ ok: true });
-  }
-
-  if (!req.headers['accept-language']) {
-    return res.status(200).json({ ok: true });
-  }
-
-  const ip = getClientIp(req);
-  if (!checkRateLimit(ip)) {
-    return res.status(429).json({ error: 'Too many requests' });
-  }
-
   const body = typeof req.body === 'string' ? JSON.parse(req.body) : (req.body ?? {});
   const { first_name, last_name, email, phone, interest, notes, _honey, _ts } = body;
 
@@ -116,29 +53,23 @@ export default async function handler(req, res) {
     return res.status(200).json({ ok: true });
   }
 
-  const ts = Number(_ts);
-  if (!ts || Number.isNaN(ts)) {
-    return res.status(400).json({ error: 'Invalid submission' });
-  }
-  const elapsed = Date.now() - ts;
-  if (elapsed < 2000 || elapsed > 60 * 60 * 1000) {
-    return res.status(200).json({ ok: true });
+  if (_ts) {
+    const elapsed = Date.now() - Number(_ts);
+    if (elapsed >= 0 && elapsed < 1500) {
+      return res.status(200).json({ ok: true });
+    }
   }
 
   if (!first_name || !last_name || !isValidEmail(email) || !interest) {
     return res.status(400).json({ error: 'Missing or invalid fields' });
   }
 
-  const emailDomain = email.split('@')[1]?.toLowerCase();
-  if (emailDomain && DISPOSABLE_EMAIL_DOMAINS.has(emailDomain)) {
-    return res.status(400).json({ error: 'Please use a permanent email address' });
-  }
-
-  if (looksLikeSpam(first_name) || looksLikeSpam(last_name) || looksLikeSpam(notes)) {
-    return res.status(200).json({ ok: true });
-  }
-
-  if (first_name.length > 60 || last_name.length > 60 || (notes && notes.length > 1500)) {
+  if (
+    String(first_name).length > 80 ||
+    String(last_name).length > 80 ||
+    String(email).length > 200 ||
+    (notes && String(notes).length > 2000)
+  ) {
     return res.status(400).json({ error: 'Field too long' });
   }
 
