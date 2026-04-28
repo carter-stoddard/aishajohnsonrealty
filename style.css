@@ -181,6 +181,29 @@ body {
   transform: translateY(-2px);
 }
 
+.btn-submit:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.form-status {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.95rem;
+  font-style: italic;
+  margin-top: 8px;
+  min-height: 20px;
+  text-align: center;
+}
+
+.form-status.success {
+  color: var(--font-color);
+}
+
+.form-status.error {
+  color: #a14444;
+}
+
 /* Social Icons */
 .social-icons {
   display: flex;

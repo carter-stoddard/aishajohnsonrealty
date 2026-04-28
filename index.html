@@ -34,10 +34,7 @@
 
         <div class="form-container">
           <h2 class="form-heading">Ready to Make a Move?</h2>
-          <form action="https://formsubmit.co/amjrebroker@outlook.com" method="POST" class="contact-form">
-            <input type="hidden" name="_subject" value="New Lead from Landing Page">
-            <input type="hidden" name="_captcha" value="true">
-            <input type="hidden" name="_template" value="table">
+          <form id="lead-form" class="contact-form" novalidate>
             <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
             <div class="form-field">
               <input type="text" name="first_name" placeholder="First Name" data-hint="Beautiful name ✨" required>
@@ -68,6 +65,7 @@
               <span class="field-hint"></span>
             </div>
             <button type="submit" class="btn-submit">LET'S CONNECT</button>
+            <p class="form-status" role="status" aria-live="polite"></p>
           </form>
         </div>
         <script>
@@ -79,6 +77,51 @@
               hint.textContent = el.value.trim() ? message : '';
               hint.classList.toggle('show', !!el.value.trim());
             });
+          });
+
+          const form = document.getElementById('lead-form');
+          const status = form.querySelector('.form-status');
+          const submitBtn = form.querySelector('.btn-submit');
+
+          form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            status.textContent = '';
+            status.classList.remove('error', 'success');
+
+            const data = Object.fromEntries(new FormData(form).entries());
+
+            if (!data.first_name || !data.last_name || !data.email || !data.interest) {
+              status.textContent = 'Please fill in all required fields.';
+              status.classList.add('error');
+              return;
+            }
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'SENDING...';
+
+            try {
+              const response = await fetch('/api/send-lead', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data),
+              });
+
+              if (!response.ok) throw new Error('Request failed');
+
+              form.reset();
+              document.querySelectorAll('.field-hint').forEach(h => {
+                h.textContent = '';
+                h.classList.remove('show');
+              });
+              status.textContent = "Thanks! Aisha will be in touch soon.";
+              status.classList.add('success');
+              submitBtn.textContent = 'SENT ✓';
+            } catch {
+              status.textContent = 'Something went wrong. Please try again or call directly.';
+              status.classList.add('error');
+              submitBtn.disabled = false;
+              submitBtn.textContent = "LET'S CONNECT";
+            }
           });
         </script>
       </main>
