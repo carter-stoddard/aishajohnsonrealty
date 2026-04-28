@@ -68,85 +68,6 @@
             <p class="form-status" role="status" aria-live="polite"></p>
           </form>
         </div>
-        <script>
-          document.querySelectorAll('.form-field input, .form-field textarea').forEach(el => {
-            const hint = el.parentElement.querySelector('.field-hint');
-            const message = el.getAttribute('data-hint');
-            if (!hint || !message) return;
-            el.addEventListener('input', () => {
-              hint.textContent = el.value.trim() ? message : '';
-              hint.classList.toggle('show', !!el.value.trim());
-            });
-          });
-
-          const form = document.getElementById('lead-form');
-          const status = form.querySelector('.form-status');
-          const submitBtn = form.querySelector('.btn-submit');
-          const modal = document.getElementById('success-modal');
-          const modalClose = document.getElementById('modal-close');
-
-          function openModal() {
-            modal.hidden = false;
-            requestAnimationFrame(() => modal.classList.add('show'));
-            document.body.style.overflow = 'hidden';
-          }
-
-          function closeModal() {
-            modal.classList.remove('show');
-            document.body.style.overflow = '';
-            setTimeout(() => { modal.hidden = true; }, 300);
-          }
-
-          modalClose.addEventListener('click', closeModal);
-          modal.addEventListener('click', (e) => {
-            if (e.target === modal) closeModal();
-          });
-          document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && !modal.hidden) closeModal();
-          });
-
-          form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            status.textContent = '';
-            status.classList.remove('error', 'success');
-
-            const data = Object.fromEntries(new FormData(form).entries());
-
-            if (!data.first_name || !data.last_name || !data.email || !data.interest) {
-              status.textContent = 'Please fill in all required fields.';
-              status.classList.add('error');
-              return;
-            }
-
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'SENDING...';
-
-            try {
-              const response = await fetch('/api/send-lead', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data),
-              });
-
-              if (!response.ok) throw new Error('Request failed');
-
-              form.reset();
-              document.querySelectorAll('.field-hint').forEach(h => {
-                h.textContent = '';
-                h.classList.remove('show');
-              });
-              status.textContent = '';
-              submitBtn.disabled = false;
-              submitBtn.textContent = "LET'S CONNECT";
-              openModal();
-            } catch {
-              status.textContent = 'Something went wrong. Please try again or call directly.';
-              status.classList.add('error');
-              submitBtn.disabled = false;
-              submitBtn.textContent = "LET'S CONNECT";
-            }
-          });
-        </script>
       </main>
 
       <div class="success-modal" id="success-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" hidden>
@@ -168,5 +89,84 @@
         <p class="footer-sub">REALTOR® | DRE # 01769136</p>
       </footer>
     </div>
+    <script>
+      document.querySelectorAll('.form-field input, .form-field textarea').forEach(el => {
+        const hint = el.parentElement.querySelector('.field-hint');
+        const message = el.getAttribute('data-hint');
+        if (!hint || !message) return;
+        el.addEventListener('input', () => {
+          hint.textContent = el.value.trim() ? message : '';
+          hint.classList.toggle('show', !!el.value.trim());
+        });
+      });
+
+      const form = document.getElementById('lead-form');
+      const status = form.querySelector('.form-status');
+      const submitBtn = form.querySelector('.btn-submit');
+      const modal = document.getElementById('success-modal');
+      const modalClose = document.getElementById('modal-close');
+
+      function openModal() {
+        modal.hidden = false;
+        requestAnimationFrame(() => modal.classList.add('show'));
+        document.body.style.overflow = 'hidden';
+      }
+
+      function closeModal() {
+        modal.classList.remove('show');
+        document.body.style.overflow = '';
+        setTimeout(() => { modal.hidden = true; }, 300);
+      }
+
+      modalClose.addEventListener('click', closeModal);
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeModal();
+      });
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && !modal.hidden) closeModal();
+      });
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        status.textContent = '';
+        status.classList.remove('error', 'success');
+
+        const data = Object.fromEntries(new FormData(form).entries());
+
+        if (!data.first_name || !data.last_name || !data.email || !data.interest) {
+          status.textContent = 'Please fill in all required fields.';
+          status.classList.add('error');
+          return;
+        }
+
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'SENDING...';
+
+        try {
+          const response = await fetch('/api/send-lead', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
+          });
+
+          if (!response.ok) throw new Error('Request failed');
+
+          form.reset();
+          document.querySelectorAll('.field-hint').forEach(h => {
+            h.textContent = '';
+            h.classList.remove('show');
+          });
+          status.textContent = '';
+          submitBtn.disabled = false;
+          submitBtn.textContent = "LET'S CONNECT";
+          openModal();
+        } catch {
+          status.textContent = 'Something went wrong. Please try again or call directly.';
+          status.classList.add('error');
+          submitBtn.disabled = false;
+          submitBtn.textContent = "LET'S CONNECT";
+        }
+      });
+    </script>
   </body>
 </html>
