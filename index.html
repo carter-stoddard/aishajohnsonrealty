@@ -82,6 +82,28 @@
           const form = document.getElementById('lead-form');
           const status = form.querySelector('.form-status');
           const submitBtn = form.querySelector('.btn-submit');
+          const modal = document.getElementById('success-modal');
+          const modalClose = document.getElementById('modal-close');
+
+          function openModal() {
+            modal.hidden = false;
+            requestAnimationFrame(() => modal.classList.add('show'));
+            document.body.style.overflow = 'hidden';
+          }
+
+          function closeModal() {
+            modal.classList.remove('show');
+            document.body.style.overflow = '';
+            setTimeout(() => { modal.hidden = true; }, 300);
+          }
+
+          modalClose.addEventListener('click', closeModal);
+          modal.addEventListener('click', (e) => {
+            if (e.target === modal) closeModal();
+          });
+          document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && !modal.hidden) closeModal();
+          });
 
           form.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -113,9 +135,10 @@
                 h.textContent = '';
                 h.classList.remove('show');
               });
-              status.textContent = "Thanks! Aisha will be in touch soon.";
-              status.classList.add('success');
-              submitBtn.textContent = 'SENT ✓';
+              status.textContent = '';
+              submitBtn.disabled = false;
+              submitBtn.textContent = "LET'S CONNECT";
+              openModal();
             } catch {
               status.textContent = 'Something went wrong. Please try again or call directly.';
               status.classList.add('error');
@@ -125,6 +148,20 @@
           });
         </script>
       </main>
+
+      <div class="success-modal" id="success-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" hidden>
+        <div class="success-modal-card">
+          <div class="success-icon" aria-hidden="true">
+            <svg viewBox="0 0 52 52" width="52" height="52">
+              <circle cx="26" cy="26" r="24" fill="none" stroke="#6b4765" stroke-width="2"/>
+              <path d="M14 27 L23 35 L38 18" fill="none" stroke="#6b4765" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <h3 id="modal-title" class="success-title">Request Received</h3>
+          <p class="success-message">Thank you — Aisha will personally respond within 24 hours.</p>
+          <button type="button" class="success-close" id="modal-close">CLOSE</button>
+        </div>
+      </div>
 
       <footer class="footer">
         <p class="footer-main">BROKER ASSOCIATE · TRILLION REAL ESTATE</p>
