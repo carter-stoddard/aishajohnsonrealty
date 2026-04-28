@@ -105,12 +105,15 @@
             if (e.key === 'Escape' && !modal.hidden) closeModal();
           });
 
+          const pageLoadedAt = Date.now();
+
           form.addEventListener('submit', async (e) => {
             e.preventDefault();
             status.textContent = '';
             status.classList.remove('error', 'success');
 
             const data = Object.fromEntries(new FormData(form).entries());
+            data._ts = pageLoadedAt;
 
             if (!data.first_name || !data.last_name || !data.email || !data.interest) {
               status.textContent = 'Please fill in all required fields.';

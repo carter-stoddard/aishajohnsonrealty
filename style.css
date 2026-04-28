@@ -205,6 +205,10 @@ body {
 }
 
 /* Success Modal */
+.success-modal[hidden] {
+  display: none !important;
+}
+
 .success-modal {
   position: fixed;
   inset: 0;
