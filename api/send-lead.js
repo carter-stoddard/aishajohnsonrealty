@@ -15,20 +15,6 @@ function isValidEmail(value) {
   return typeof value === 'string' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 }
 
-function originAllowed(req) {
-  const origin = req.headers.origin || req.headers.referer || '';
-  if (!origin) return true;
-  try {
-    const host = new URL(origin).hostname;
-    if (host === 'localhost' || host.startsWith('127.')) return true;
-    if (host.endsWith('.vercel.app')) return true;
-    if (host === 'aishajohnsonrealty.com' || host.endsWith('.aishajohnsonrealty.com')) return true;
-    return false;
-  } catch {
-    return true;
-  }
-}
-
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     res.setHeader('Allow', 'POST');
@@ -42,35 +28,15 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: 'Server is not configured' });
   }
 
-  if (!originAllowed(req)) {
-    return res.status(403).json({ error: 'Forbidden' });
-  }
-
   const body = typeof req.body === 'string' ? JSON.parse(req.body) : (req.body ?? {});
-  const { first_name, last_name, email, phone, interest, notes, _honey, _ts } = body;
+  const { first_name, last_name, email, phone, interest, notes, _honey } = body;
 
   if (_honey) {
     return res.status(200).json({ ok: true });
   }
 
-  if (_ts) {
-    const elapsed = Date.now() - Number(_ts);
-    if (elapsed >= 0 && elapsed < 1500) {
-      return res.status(200).json({ ok: true });
-    }
-  }
-
   if (!first_name || !last_name || !isValidEmail(email) || !interest) {
     return res.status(400).json({ error: 'Missing or invalid fields' });
-  }
-
-  if (
-    String(first_name).length > 80 ||
-    String(last_name).length > 80 ||
-    String(email).length > 200 ||
-    (notes && String(notes).length > 2000)
-  ) {
-    return res.status(400).json({ error: 'Field too long' });
   }
 
   const fullName = `${first_name} ${last_name}`.trim();
