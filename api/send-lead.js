@@ -29,14 +29,10 @@ export default async function handler(req, res) {
   }
 
   const body = typeof req.body === 'string' ? JSON.parse(req.body) : (req.body ?? {});
-  const { first_name, last_name, email, phone, interest, notes, _honey } = body;
-
-  if (_honey) {
-    return res.status(200).json({ ok: true });
-  }
+  const { first_name, last_name, email, phone, interest, notes } = body;
 
   if (!first_name || !last_name || !isValidEmail(email) || !interest) {
-    return res.status(400).json({ error: 'Missing or invalid fields' });
+    return res.status(400).json({ error: 'Missing or invalid fields', received: Object.keys(body) });
   }
 
   const fullName = `${first_name} ${last_name}`.trim();
